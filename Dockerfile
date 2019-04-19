@@ -55,18 +55,18 @@ RUN yum -y install sudo openssh-server openssh-clients; systemctl enable sshd.se
 # - Set permissions
 # ------------------------------------------------------------------------------
 RUN ln -sf \
-		/usr/share/zoneinfo/UTC \
-		/etc/localtime \
+    /usr/share/zoneinfo/UTC \
+    /etc/localtime \
   && echo "NETWORKING=yes" \
     > /etc/sysconfig/network \
-	&& sed -i \
-		-e 's~^#PermitRootLogin yes~PermitRootLogin no~g' \
+  && sed -i \
+    -e 's~^#PermitRootLogin yes~PermitRootLogin no~g' \
     -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' \
-		-e 's~^#UseDNS yes~UseDNS no~g' \
-		/etc/ssh/sshd_config \
-	&& sed -i \
-		-e 's~^# %wheel\tALL=(ALL)\tALL~%wheel\tALL=(ALL) ALL~g' \
-		-e 's~\(.*\) requiretty$~#\1requiretty~' \
+    -e 's~^#UseDNS yes~UseDNS no~g' \
+    /etc/ssh/sshd_config \
+  && sed -i \
+    -e 's~^# %wheel\tALL=(ALL)\tALL~%wheel\tALL=(ALL) ALL~g' \
+    -e 's~\(.*\) requiretty$~#\1requiretty~' \
   /etc/sudoers \
   && echo "vagrant ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vagrant_user
 
