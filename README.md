@@ -6,6 +6,10 @@ solutions like VirtualBox that emulate the entire machine.
 
 Tested in Docker Desktop on OSX.
 
+This also demonstrates building a yum cache in one stage of a multistage
+build, then installing from that cache in another stage, avoiding both network
+traffic and bloat in the final image.
+
 ## Project setup
 ```
 vagrant up --provider=docker

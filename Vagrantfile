@@ -12,6 +12,6 @@ Vagrant.configure(2) do |config|
     docker.name = "vagrant-docker"
     docker.remains_running = true
     docker.has_ssh = true
-    docker.create_args = ['--tmpfs', '/tmp', '--tmpfs', '/run', '-v', '/sys/fs/cgroup:/sys/fs/cgroup:ro']
+    docker.create_args = ['--tmpfs', '/tmp:exec', '--tmpfs', '/run', '-v', '/sys/fs/cgroup:/sys/fs/cgroup:ro']
   end
 end
