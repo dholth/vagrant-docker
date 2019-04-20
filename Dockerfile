@@ -6,7 +6,7 @@
 
 # Tested on Docker Engine 18.09
 # To use, enable experimental features in your docker, and/or export DOCKER_BUILDKIT=1
-# Then run docker build . with the normal syntax.
+# Then run `docker build .` as usual.
 
 # See https://github.com/docker-library/docs/blob/master/centos/README.md
 FROM centos:7 AS centos-with-init
@@ -48,11 +48,9 @@ RUN yum -y install sudo openssh-server openssh-clients; systemctl enable sshd.se
 # From https://github.com/jdeathe/centos-ssh/blob/centos-7-develop/Dockerfile
 # Provisioning
 # - UTC Timezone
-# - Networking
+# - Networking (services expect this file)
 # - Configure SSH defaults for non-root public key authentication
 # - Enable the wheel sudoers group
-# - Replace placeholders with values in systemd service unit template
-# - Set permissions
 # ------------------------------------------------------------------------------
 RUN ln -sf \
     /usr/share/zoneinfo/UTC \
