@@ -9,28 +9,33 @@
 # Then run `docker build .` as usual.
 
 # See https://github.com/docker-library/docs/blob/master/centos/README.md
-FROM centos:7 AS centos-with-init
+FROM centos:8 AS centos-with-init
 ENV container docker
 # the centos instructions were outdated. a nearly unmodified image works better.
 CMD ["/usr/sbin/init"]
 
 
 # A cache of RPMs that we can use in other stages of the build
-FROM centos:7 AS yum-cache
+FROM centos:8 AS yum-cache
 
 # (add any other repositories you need here)
+
+# RUN yum -y install deltarpm
+# no deltarpm package in centos8
+# dnf handles (or doesn't) deltarpm, differently
+RUN yum -y install drpm
 
 # (generate list in a model container with rpm -qa --qf "%{NAME}\n" | sort)
 COPY ./packagelist.txt .
 
 # Build cache of RPMs in packagelist.txt without installing
-RUN yum -y install --downloadonly $(cat packagelist.txt)
+RUN yum -y install --downloadonly --skip-broken $(cat packagelist.txt)
 
 
 FROM centos-with-init as vagrant-base
-MAINTAINER Daniel Holth dholth@gmail.com
+LAMEL maintainer="Daniel Holth <dholth@gmail.com>"
 
-RUN useradd vagrant \
+RUN yum -y install passwd && useradd vagrant \
   && echo "vagrant" | passwd --stdin vagrant \
   && usermod -a -G wheel vagrant
 
@@ -69,7 +74,7 @@ RUN ln -sf \
   && echo "vagrant ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vagrant_user
 
 # Disable annoying log messages (though they cannot be filtered from journalctl)
-RUN echo ":msg, contains, \"Time has been changed\" ~" > /etc/rsyslog.d/time_msgs.conf
+# RUN echo ":msg, contains, \"Time has been changed\" ~" > /etc/rsyslog.d/time_msgs.conf
 
 EXPOSE 22
 
@@ -82,9 +87,10 @@ FROM vagrant-base AS vagrant-with-packages
 # Normally you'd groupinstall or do your regular deployment instead of
 # asking for a specific list of packages, but it would be fast because most of
 # the packages are already in the cache container's /var/cache/yum
+# CentOS/8 uses dnf
 COPY ./packagelist.txt .
-RUN --mount=target=/var/cache/yum,source=/var/cache/yum,from=yum-cache \
-  yum -y install -y $(cat packagelist.txt) > yum.log 2>&1
+RUN --mount=target=/var/cache/dnf,source=/var/cache/dnf,from=yum-cache \
+  yum -y install --skip-broken $(cat packagelist.txt) > yum.log 2>&1
 
 # Docker's new --mount syntax keeps the yum cache out of our target container.
 

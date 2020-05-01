@@ -11,6 +11,10 @@ build, then installing from that cache in another stage, avoiding both network
 traffic and bloat in the final image.
 
 ## Project setup
+Requires buildkit. Export DOCKER_BUILDKIT=1 or add
+`{ "features": { "buildkit": true } }` to the configuration.
+
 ```
+export DOCKER_BUILDKIT=1
 vagrant up --provider=docker
 ```
