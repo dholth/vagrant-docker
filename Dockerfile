@@ -33,7 +33,7 @@ RUN yum -y install --downloadonly --skip-broken $(cat packagelist.txt)
 
 
 FROM centos-with-init as vagrant-base
-LAMEL maintainer="Daniel Holth <dholth@gmail.com>"
+LABEL maintainer="Daniel Holth <dholth@gmail.com>"
 
 RUN yum -y install passwd && useradd vagrant \
   && echo "vagrant" | passwd --stdin vagrant \
